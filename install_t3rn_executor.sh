@@ -13,17 +13,22 @@ fi
 
 PRIVATE_KEY=$1
 
+# 当前执行目录（脚本运行时所在位置）
+WORKDIR=$(pwd)
+
+echo "📁 当前工作目录：$WORKDIR"
 echo "🚀 开始安装 t3rn Executor..."
 
-# 创建工作目录
-mkdir -p ~/t3rn && cd ~/t3rn
+# 创建本地t3rn目录
+mkdir -p "$WORKDIR/t3rn"
+cd "$WORKDIR/t3rn"
 
 # 获取最新版本号
 VERSION=$(curl -s https://api.github.com/repos/t3rn/executor-release/releases/latest | grep -Po '"tag_name": "\K.*?(?=")')
 echo "📦 最新版本: $VERSION"
 
 # 下载 Binary 文件
-wget https://github.com/t3rn/executor-release/releases/download/${VERSION}/executor-linux-${VERSION}.tar.gz
+wget -O executor-linux-${VERSION}.tar.gz https://github.com/t3rn/executor-release/releases/download/${VERSION}/executor-linux-${VERSION}.tar.gz
 
 # 解压
 tar -xzf executor-linux-${VERSION}.tar.gz
@@ -32,7 +37,7 @@ tar -xzf executor-linux-${VERSION}.tar.gz
 cd executor/executor/bin
 
 # 设置环境变量
-echo "🔧 写入环境变量到 ~/.bashrc ..."
+echo "🔧 写入环境变量到 ~/.bashrc（不会影响当前目录结构）..."
 
 cat <<EOF >> ~/.bashrc
 
@@ -71,7 +76,7 @@ sudo apt update && sudo apt install screen -y
 
 echo "✅ 安装完成！你可以使用以下命令启动 Executor："
 echo ""
-echo "cd ~/t3rn/executor/executor/bin"
+echo "cd $WORKDIR/t3rn/executor/executor/bin"
 echo "./executor"
 echo ""
 echo "💡 推荐使用 screen 后台运行："

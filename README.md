@@ -1,4 +1,5 @@
 一键运行命令：
+
 wget -O install_t3rn_executor.sh https://raw.githubusercontent.com/ORGANICMI/t3rn/main/install_t3rn_executor.sh && sed -i 's/\r$//' install_t3rn_executor.sh && chmod +x install_t3rn_executor.sh && ./install_t3rn_executor.sh YOUR_PRIVATE_KEY_HERE
 
 1、修改脚本中的地址为你自己的私钥

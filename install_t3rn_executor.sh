@@ -2,9 +2,20 @@
 
 set -e
 
+# -----------------------------
+# 接收用户传入的私钥参数
+# -----------------------------
+if [ -z "$1" ]; then
+  echo "❌ 错误：请在运行脚本时传入你的私钥参数"
+  echo "👉 用法示例: ./install_t3rn_executor.sh YOUR_PRIVATE_KEY_HERE"
+  exit 1
+fi
+
+PRIVATE_KEY=$1
+
 echo "🚀 开始安装 t3rn Executor..."
 
-# 创建目录
+# 创建工作目录
 mkdir -p ~/t3rn && cd ~/t3rn
 
 # 获取最新版本号
@@ -15,13 +26,13 @@ echo "📦 最新版本: $VERSION"
 wget https://github.com/t3rn/executor-release/releases/download/${VERSION}/executor-linux-${VERSION}.tar.gz
 
 # 解压
-tar -xzf executor-linux-*.tar.gz
+tar -xzf executor-linux-${VERSION}.tar.gz
 
-# 进入执行目录
+# 进入执行器目录
 cd executor/executor/bin
 
-# 设置环境变量（你可以根据自己的实际信息修改）
-echo "🔧 设置环境变量..."
+# 设置环境变量
+echo "🔧 写入环境变量到 ~/.bashrc ..."
 
 cat <<EOF >> ~/.bashrc
 
@@ -36,8 +47,7 @@ export EXECUTOR_PROCESS_CLAIMS_ENABLED=true
 
 export EXECUTOR_MAX_L3_GAS_PRICE=100
 
-# ⚠️ 请替换为你自己的私钥
-export PRIVATE_KEY_LOCAL=dead93c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56dbeef
+export PRIVATE_KEY_LOCAL=${PRIVATE_KEY}
 
 export ENABLED_NETWORKS='arbitrum-sepolia,base-sepolia,optimism-sepolia,l2rn'
 
@@ -53,10 +63,10 @@ export EXECUTOR_PROCESS_PENDING_ORDERS_FROM_API=true
 # === t3rn Executor 环境变量 END ===
 EOF
 
-# 应用环境变量
+# 加载环境变量
 source ~/.bashrc
 
-# 可选安装 screen 工具
+# 安装 screen 工具
 sudo apt update && sudo apt install screen -y
 
 echo "✅ 安装完成！你可以使用以下命令启动 Executor："
@@ -64,7 +74,5 @@ echo ""
 echo "cd ~/t3rn/executor/executor/bin"
 echo "./executor"
 echo ""
-echo "💡 推荐在 screen 中运行："
-echo "screen -S t3rn-executor"
-echo "./executor"
-echo "(Ctrl+A+D 可后台运行，screen -r t3rn-executor 可重新连接)"
+echo "💡 推荐使用 screen 后台运行："
+echo "screen -S t3rn-executor ./executor"
